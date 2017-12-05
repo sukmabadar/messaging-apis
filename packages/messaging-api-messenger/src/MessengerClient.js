@@ -148,6 +148,41 @@ export default class MessengerClient {
       .then(res => res.data, handleError);
 
   /**
+   * Create Subscription
+   *
+   * https://developers.facebook.com/docs/graph-api/reference/app/subscriptions
+   */
+  createSubscription = ({
+    app_id: appId,
+    object,
+    callback_url,
+    fields,
+    include_values,
+    verify_token,
+    access_token: customAccessToken,
+  }: {
+    app_id: string,
+    object?: 'user' | 'page' | 'permissions' | 'payments',
+    callback_url: string,
+    fields?: Array<string>,
+    include_values?: boolean,
+    verify_token: string,
+    access_token?: string,
+  }): Promise<{ success: boolean }> =>
+    this._axios
+      .post(
+        `/${appId}/subscriptions?access_token=${customAccessToken ||
+          this._accessToken}`,
+        {
+          object: object || 'page',
+          callback_url,
+          fields: fields ? fields.join(',') : ['messages'],
+          include_values,
+          verify_token,
+        }
+      )
+      .then(res => res.data, handleError);
+  /**
    * Get User Profile
    *
    * https://www.quora.com/How-connect-Facebook-user-id-to-sender-id-in-the-Facebook-messenger-platform
